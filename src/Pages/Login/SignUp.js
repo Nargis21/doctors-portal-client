@@ -1,68 +1,76 @@
-import React, { useEffect, useState } from 'react';
-import { useSendPasswordResetEmail, useSignInWithEmailAndPassword, useSignInWithGoogle } from 'react-firebase-hooks/auth';
+import React, { useEffect } from 'react';
+import { useCreateUserWithEmailAndPassword, useSignInWithGoogle, useUpdateProfile } from 'react-firebase-hooks/auth';
 import { useForm } from 'react-hook-form';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import auth from '../../firebase.init';
 import Loading from '../Shared/Loading';
 
-const Login = () => {
+const SignUp = () => {
     const navigate = useNavigate()
-    const location = useLocation()
-    const from = location.state?.from?.pathname || '/'
-
-    const { register, formState: { errors }, handleSubmit, getValues } = useForm();
-    const onSubmit = data => {
-        signInWithEmailAndPassword(data.email, data.password)
-    };
     const [signInWithGoogle, googleUser, googleLoading, googleError] = useSignInWithGoogle(auth);
 
     const [
-        signInWithEmailAndPassword,
+        createUserWithEmailAndPassword,
         user,
         loading,
         error,
-    ] = useSignInWithEmailAndPassword(auth);
-    const [sendPasswordResetEmail, sending, resetError] = useSendPasswordResetEmail(
-        auth
-    );
-    const handleResetPassword = async () => {
-        const email = getValues('email')
-        if (email) {
-            await sendPasswordResetEmail(email);
-            alert('Sent email');
-        }
-    }
+    ] = useCreateUserWithEmailAndPassword(auth, { sendEmailVerification: true });
+
+    const [updateProfile, updating, updateError] = useUpdateProfile(auth);
+
+    const { register, formState: { errors }, handleSubmit } = useForm();
+
+    const onSubmit = async data => {
+        await createUserWithEmailAndPassword(data.email, data.password)
+        await updateProfile({ displayName: data.name });
+    };
 
     useEffect(() => {
         if (user || googleUser) {
-            navigate(from, { replace: true });
+            navigate('/appointment')
         }
-    }, [user, googleUser, from, navigate])
+    }, [user, googleUser, navigate])
 
     let signInError
-    if (error || googleError) {
+    if (error || googleError || updateError) {
         signInError = <span className='text-red-500'>{error?.message || googleError?.message}</span>
     }
-    if (loading || googleLoading) {
+    if (loading || googleLoading || updating) {
         return <Loading></Loading>
     }
-
-
-
     return (
         <div className='flex h-screen justify-center items-center'>
             <div className="card w-96 bg-base-100 shadow-xl">
                 <div className="card-body items-center ">
-                    <h2 className="card-title text-2xl">Login</h2>
+                    <h2 className="card-title text-2xl">Sign Up</h2>
 
                     <form className='w-full' onSubmit={handleSubmit(onSubmit)}>
 
                         <div className="form-control w-full max-w-xs">
                             <label className="label">
+                                <span className="label-text">Name</span>
+                            </label>
+                            <input
+                                type="text"
+                                placeholder="Your Email"
+                                className="input input-bordered w-full max-w-xs"
+                                {...register("name", {
+                                    required: {
+                                        value: true,
+                                        message: 'Name is required'
+
+                                    }
+                                })}
+                            />
+                            <label className="label">
+                                {errors.name?.type === 'required' && <span className="label-text-alt text-red-500">{errors.name.message}</span>}
+                            </label>
+                        </div>
+                        <div className="form-control w-full max-w-xs">
+                            <label className="label">
                                 <span className="label-text">Email</span>
                             </label>
                             <input
-                                onBlur={e => console.log(e.target.value)}
                                 type="email"
                                 placeholder="Email Address"
                                 className="input input-bordered w-full max-w-xs"
@@ -106,17 +114,12 @@ const Login = () => {
                             <label className="label">
                                 {errors.password?.type === 'required' && <span className="label-text-alt text-red-500">{errors.password.message}</span>}
                                 {errors.password?.type === 'minLength' && <span className="label-text-alt text-red-500 text-sm">{errors.password.message}</span>}
-                                <button
-                                    type='button'
-                                    onClick={handleResetPassword}
-                                    class="btn btn-link normal-case"><p>Forget Password?</p></button>
                             </label>
                         </div>
-
                         {signInError}
-                        <input type="submit" className='btn w-full mt-4 text-white' value='Login' />
+                        <input type="submit" className='btn w-full mt-4 text-white' value='Sign Up' />
                     </form>
-                    <p className='text-sm pt-2'>New to Doctors Portal? <Link className='text-primary' to='/signup'>Create new account</Link></p>
+                    <p className='text-sm pt-2'>Already have an Account? <Link className='text-primary' to='/login'>Please Login</Link></p>
 
                     <div className="divider">OR</div>
                     <button className="btn btn-outline w-full"
@@ -129,4 +132,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default SignUp;

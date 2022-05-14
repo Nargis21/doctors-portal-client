@@ -1,6 +1,6 @@
 import React from 'react';
 import treatment from '../../assets/images/treatment.png'
-import MainButton from '../Shared/Navbar/MainButton';
+import MainButton from '../Shared/MainButton';
 
 const blog = () => {
     return (

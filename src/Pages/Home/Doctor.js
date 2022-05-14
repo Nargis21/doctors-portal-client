@@ -2,13 +2,13 @@ import React from 'react';
 import doctor from '../../assets/images/doctor-small.png'
 import doctor2 from '../../assets/images/doctor.png'
 import appointment from '../../assets/images/appointment.png'
-import MainButton from '../Shared/Navbar/MainButton';
+import MainButton from '../Shared/MainButton';
 
 const Doctor = () => {
     return (
-        <div className="hero lg:min-h-screen lg:px-20" style={{ backgroundImage: `url(${appointment})` }}>
-            <div className="hero-content flex-col lg:flex-row">
-                <img src={doctor2} className="lg:max-w-xl  mt-[-200px] hidden lg:block" />
+        <div className="hero lg:px-20" style={{ backgroundImage: `url(${appointment})` }}>
+            <div className="hero-content lg:p-0 flex-col lg:flex-row">
+                <img src={doctor} className="lg:max-w-xl mt-[-100px] hidden lg:block" />
                 <div className='text-white'>
                     <h1 className='text-xl text-secondary mb-5 font-bold'>Appointment</h1>
                     <h1 className="text-3xl font-bold">Make an appointment Today</h1>

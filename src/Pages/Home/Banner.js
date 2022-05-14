@@ -1,7 +1,7 @@
 import React from 'react';
 import chair from '../../assets/images/chair.png'
 import background from '../../assets/images/bg.png'
-import MainButton from '../Shared/Navbar/MainButton';
+import MainButton from '../Shared/MainButton';
 const Banner = () => {
     return (
         <div className="hero lg:min-h-screen bg-cover pb-20" style={{ backgroundImage: `url(${background})` }}>

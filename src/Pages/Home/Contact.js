@@ -1,6 +1,6 @@
 import React from 'react';
 import background from '../../assets/images/appointment.png'
-import MainButton from '../Shared/Navbar/MainButton';
+import MainButton from '../Shared/MainButton';
 
 const Contact = () => {
     return (
