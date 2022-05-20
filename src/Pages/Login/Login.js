@@ -3,6 +3,7 @@ import { useSendPasswordResetEmail, useSignInWithEmailAndPassword, useSignInWith
 import { useForm } from 'react-hook-form';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import auth from '../../firebase.init';
+import useToken from '../../hooks/useToken';
 import Loading from '../Shared/Loading';
 
 const Login = () => {
@@ -25,6 +26,9 @@ const Login = () => {
     const [sendPasswordResetEmail, sending, resetError] = useSendPasswordResetEmail(
         auth
     );
+
+    const [token] = useToken(user || googleUser)
+
     const handleResetPassword = async () => {
         const email = getValues('email')
         if (email) {
@@ -34,10 +38,10 @@ const Login = () => {
     }
 
     useEffect(() => {
-        if (user || googleUser) {
+        if (token) {
             navigate(from, { replace: true });
         }
-    }, [user, googleUser, from, navigate])
+    }, [token, from, navigate])
 
     let signInError
     if (error || googleError) {
@@ -109,7 +113,7 @@ const Login = () => {
                                 <button
                                     type='button'
                                     onClick={handleResetPassword}
-                                    class="btn btn-link normal-case"><p>Forget Password?</p></button>
+                                    className="btn btn-link normal-case"><p>Forget Password?</p></button>
                             </label>
                         </div>
 

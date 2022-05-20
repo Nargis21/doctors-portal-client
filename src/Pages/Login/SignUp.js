@@ -3,6 +3,7 @@ import { useCreateUserWithEmailAndPassword, useSignInWithGoogle, useUpdateProfil
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import auth from '../../firebase.init';
+import useToken from '../../hooks/useToken';
 import Loading from '../Shared/Loading';
 
 const SignUp = () => {
@@ -20,16 +21,18 @@ const SignUp = () => {
 
     const { register, formState: { errors }, handleSubmit } = useForm();
 
+    const [token] = useToken(user || googleUser)
+
     const onSubmit = async data => {
         await createUserWithEmailAndPassword(data.email, data.password)
         await updateProfile({ displayName: data.name });
     };
 
     useEffect(() => {
-        if (user || googleUser) {
+        if (token) {
             navigate('/appointment')
         }
-    }, [user, googleUser, navigate])
+    }, [token, navigate])
 
     let signInError
     if (error || googleError || updateError) {
@@ -52,7 +55,7 @@ const SignUp = () => {
                             </label>
                             <input
                                 type="text"
-                                placeholder="Your Email"
+                                placeholder="Your Name"
                                 className="input input-bordered w-full max-w-xs"
                                 {...register("name", {
                                     required: {
