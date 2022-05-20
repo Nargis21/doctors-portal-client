@@ -20,7 +20,7 @@ const BookingModal = ({ treatment, date, setTreatment, refetch }) => {
             phone: event.target.phone.value
         }
 
-        fetch('http://localhost:5000/booking', {
+        fetch('https://thawing-cliffs-55758.herokuapp.com/booking', {
             method: 'POST',
             headers: {
                 'content-type': 'application/json'
@@ -30,10 +30,10 @@ const BookingModal = ({ treatment, date, setTreatment, refetch }) => {
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
-                    toast(`Appointment set on ${formattedDate} at ${booking.slot}`)
+                    toast.success(`Appointment set on ${formattedDate} at ${booking.slot}`)
                 }
                 else {
-                    toast(`Already have an appointment on ${data.booking?.date} at ${data.booking?.slot}`)
+                    toast.error(`Already have an appointment on ${data.booking?.date} at ${data.booking?.slot}`)
                 }
                 refetch()
                 setTreatment(null)
